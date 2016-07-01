@@ -101,6 +101,12 @@ const uint8_t RTC_DayOfMonthTablePrgMem[] PROGMEM =
  *
  *  \param  pFunc   pointer to callback function for DOW timer
  ******************************************************************************/
+
+ //?
+ #if !defined(TCNT2) 
+  #define TCNT2 _SFR_MEM8(0xB2)
+#endif
+
 void RTC_Init(void)
 {
 #if !defined(MASTER_CONFIG_H)
@@ -116,7 +122,7 @@ void RTC_Init(void)
         TIFR2 = 0xFF;                       // clear interrupt-flags
         TIMSK2 |= (1<<TOIE2);               // enable Timer2 overflow interrupt
 #else
-  #if (NANODE == 1 || JEENODE == 1)
+  #if (NANODE == 1 || JEENODE == 1 || PROMICRO == 1)
     #define TIFR TIFR1
     #define TIMSK TIMSK1
   #endif

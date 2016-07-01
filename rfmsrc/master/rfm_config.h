@@ -90,6 +90,30 @@
     #define RFM_SDO_DDR			DDRB
     #define RFM_SDO_PIN			PINB
     #define RFM_SDO_BITPOS		4
+#elif (PROMICRO == 1)
+	// Arduino pro micro (https://www.sparkfun.com/products/12587; Atmega32u4) has the following pins used:
+    // D0 Digital 3      RFM12B Interrupt (INT 0)
+    // B6 Digital 10	 Slave Select for RFM12B
+    // B2 Digital 16	 SPI bus: Shared MOSI (Master Output, Slave Input)
+    // B3 Digital 14	 SPI bus: Shared MISO (Master Input, Slave Output)
+    // B1 Digital 15	 SPI bus: Shared Serial Clock (output from master)
+	
+	// OUT: PB0 (led), PB1(SCK), PB2 (MOSI), PB6(nSEL)
+	#define RFM_SCK_DDR			DDRB
+    #define RFM_SCK_PORT		PORTB
+    #define RFM_SCK_BITPOS		1
+	
+	#define RFM_SDI_DDR			DDRB
+    #define RFM_SDI_PORT		PORTB
+    #define RFM_SDI_BITPOS		2
+
+    #define RFM_NSEL_DDR		DDRB
+    #define RFM_NSEL_PORT		PORTB
+    #define RFM_NSEL_BITPOS		6
+
+    #define RFM_SDO_DDR			DDRB
+    #define RFM_SDO_PIN			PINB
+    #define RFM_SDO_BITPOS		3
 #else
     // original master
     #define RFM_SCK_DDR			DDRB
@@ -126,6 +150,12 @@
     #define RFM_INT_vect INT0_vect
     #define RFM_INT_EN_NOCALL() (EIMSK |= _BV(INT0))
     #define RFM_INT_DIS() (EIMSK &= ~_BV(INT0))
+#elif (PROMICRO == 1)
+    #define RFM_CLK_OUTPUT 1
+    void INT1_vect(void); 
+    #define RFM_INT_vect INT1_vect
+    #define RFM_INT_EN_NOCALL() (EIMSK |= _BV(INT1))
+    #define RFM_INT_DIS() (EIMSK &= ~_BV(INT1))
 #else
     #define RFM_CLK_OUTPUT 1
     void INT2_vect(void);

@@ -47,23 +47,41 @@
 #if (defined COM_RS232) || (defined COM_RS485)
 
 #if defined (_AVR_IOM169_H_) || defined (_AVR_IOM32_H_)
-#define UDR0 UDR
-#define RXEN0 RXEN
-#define RXCIE0 RXCIE
-#define UCSR0A UCSRA
-#define UCSR0B UCSRB
-#define TXC0 TXC
-#define TXCIE0 TXCIE
-#define UDRIE0 UDRIE
-#define TXEN0 TXEN
-#define UBRR0H UBRRH
-#define UBRR0L UBRRL
-#define UCSR0C UCSRC
-#define UCSZ00 UCSZ0
-#define UCSZ01 UCSZ1
-#define U2X0 U2X
-#define URSEL0 URSEL
+	#define UDR0 UDR
+	#define RXEN0 RXEN
+	#define RXCIE0 RXCIE
+	#define UCSR0A UCSRA
+	#define UCSR0B UCSRB
+	#define TXC0 TXC
+	#define TXCIE0 TXCIE
+	#define UDRIE0 UDRIE
+	#define TXEN0 TXEN
+	#define UBRR0H UBRRH
+	#define UBRR0L UBRRL
+	#define UCSR0C UCSRC
+	#define UCSZ00 UCSZ0
+	#define UCSZ01 UCSZ1
+	#define U2X0 U2X
+	#define URSEL0 URSEL
+#elif defined(_AVR_IOM32U4_H_)
+	#define UDR0 UDR1
+	#define RXEN0 RXEN1
+	#define RXCIE0 RXCIE1
+	#define UCSR0A UCSR1A
+	#define UCSR0B UCSR1B
+	#define TXC0 TXC1
+	#define TXCIE0 TXCIE1
+	#define UDRIE0 UDRIE1
+	#define TXEN0 TXEN1
+	#define UBRR0H UBRR1H
+	#define UBRR0L UBRR1L
+	#define UCSR0C UCSR1C
+	#define UCSZ00 UCSZ10
+	#define UCSZ01 UCSZ11
+	#define U2X0 U2X1
+	#define URSEL0 UMSEL11
 #endif
+
 
 /*!
  *******************************************************************************
@@ -77,13 +95,15 @@ ISR(USART0_RX_vect)
 ISR(USART_RXC_vect)
 #elif defined (_AVR_IOM328P_H_)
 ISR(USART_RX_vect)
+#elif defined(_AVR_IOM32U4_H_)
+ISR(USART1_RX_vect)
 #endif
 {
 		COM_rx_char_isr(UDR0);	// Add char to input buffer
 		#if !defined(MASTER_CONFIG_H)
 		UCSR0B &= ~(_BV(RXEN0)|_BV(RXCIE0)); // disable receive
 		#endif
-  #if !defined(_AVR_IOM16_H_) && !defined(_AVR_IOM32_H_) && !defined(_AVR_IOM328P_H_)
+  #if !defined(_AVR_IOM16_H_) && !defined(_AVR_IOM32_H_) && !defined(_AVR_IOM328P_H_) && !defined(_AVR_IOM32U4_H_)
     PCMSK0 |= (1<<PCINT0); // activate interrupt
   #endif
 }
@@ -102,6 +122,8 @@ ISR(USART0_UDRE_vect)
 ISR(USART_UDRE_vect)
 #elif defined (_AVR_IOM328P_H_)
 ISR(USART_UDRE_vect)
+#elif defined(_AVR_IOM32U4_H_)
+ISR(USART1_UDRE_vect)
 #endif
 {
 	char c;
@@ -129,7 +151,8 @@ ISR(USART0_TX_vect)
 ISR(USART_TXC_vect)
 #elif defined (_AVR_IOM328P_H_)
 ISR(USART_TX_vect)
-
+#elif defined(_AVR_IOM32U4_H_)
+ISR(USART1_TX_vect)
 #endif
 {
 	#if defined COM_RS485
@@ -156,7 +179,7 @@ void RS_Init(void)
 		UCSR0A = _BV(U2X0);
 		UBRR0H = (unsigned char)(ubrr_val>>8);
 		UBRR0L = (unsigned char)(ubrr_val & 0xFF);
-		#if defined(_AVR_IOM16_H_) || defined(_AVR_IOM32_H_)
+		#if defined(_AVR_IOM16_H_) || defined(_AVR_IOM32_H_) || defined(_AVR_IOM32U4_H_)
             UCSR0C = (1<<URSEL0) | (_BV(UCSZ00) | _BV(UCSZ01));     // Asynchron 8N1
             #if defined(MASTER_CONFIG_H)
 			  UCSR0B = _BV(RXCIE0) | _BV(RXEN0);
@@ -168,7 +191,7 @@ void RS_Init(void)
             #endif
             UCSR0C = (_BV(UCSZ00) | _BV(UCSZ01));     // Asynchron 8N1
 		#endif
-	#if !defined(_AVR_IOM16_H_) && !defined(_AVR_IOM32_H_) && !defined(_AVR_IOM328P_H_)
+	#if !defined(_AVR_IOM16_H_) && !defined(_AVR_IOM32_H_) && !defined(_AVR_IOM328P_H_) && !defined(_AVR_IOM32U4_H_)
     PCMSK0 |= (1<<PCINT0); // activate interrupt
   #endif
 }

@@ -41,6 +41,9 @@
 	#elif defined(_AVR_IOM169_H_) || defined(_AVR_IOM16_H_) || defined(_AVR_IOM32_H_)
 		#define RS_need_clock() (UCSRB & (_BV(TXEN) | _BV(RXEN)))
 		#define RS_enable_rx() (UCSRB |= _BV(RXEN) | _BV(RXCIE))
+	#elif defined(_AVR_IOM32U4_H_)
+		#define RS_need_clock() (UCSR1B & (_BV(TXEN1) | _BV(RXEN1)))
+		#define RS_enable_rx() (UCSR1B |= _BV(RXEN1) | _BV(RXCIE1))
 	#endif
 	void RS_startSend(void);
 	void RS_Init(void);

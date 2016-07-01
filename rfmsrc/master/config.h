@@ -90,6 +90,12 @@ In this file we define only configuration parameters, for example what kind of c
 
  #define LED_sync_on() (PORTB &= ~_BV(PB1))
  #define LED_sync_off()  (PORTB |= _BV(PB1))
+#elif (PROMICRO == 1)
+ #define LED_RX_on() (PORTD |= _BV(PD5))
+ #define LED_RX_off() (PORTD &= ~_BV(PD5))
+
+ #define LED_sync_on()        (PORTB |= _BV(PB0))
+ #define LED_sync_off()  (PORTB &= ~_BV(PB0))
 #else
  #if (ATMEGA32_DEV_BOARD == 1)
   #define LED_RX_on() (PORTA |= _BV(PA1))

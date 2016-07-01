@@ -249,6 +249,15 @@ static inline void init(void)
     //  IN: PD0 (Rx), PD2 (RFM-IRQ)
     DDRD = _BV(PD1);                                        // outputs
     PORTD = _BV(PD0) | _BV(PD2) | _BV(PD3) | 0xF0;
+#elif (PROMICRO == 1)
+	// OUT: PB0 (led), PB1(SCK), PB2 (MOSI), PB6(nSEL)
+	//  IN: PB3 (MISO)
+	DDRB = _BV(PB0) | _BV(PB1) | _BV(PB2) | _BV(PB6);
+	PORTB = _BV(PB3);
+	// OUT: PD5 (led)
+    //  IN: PD0 (RFM-IRQ)
+	DDRD = _BV(PD5); 
+    PORTD = _BV(PD0);
 #else
  #if (ATMEGA32_DEV_BOARD == 1)
 	DDRA = _BV(PA2)|_BV(PA1);       //Green LED for Sync
@@ -285,6 +294,9 @@ static inline void init(void)
 #elif (JEENODE == 1)
       EICRA |= ((1<<ISC00) | (0<<ISC00)); // low-level interrupt
       EIMSK |= _BV(INT0);
+#elif (PROMICRO == 1)
+      EICRA |= ((1<<ISC10) | (1<<ISC11)); // rising edge interrupt
+      EIMSK |= _BV(INT1);
 #else
       MCUCSR |= _BV(ISC2);                // rising edge interrupt
 #endif
